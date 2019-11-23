@@ -58,7 +58,8 @@ class Client:
                 raise Exception("Please install Tornado or pass"
                                 "custom transport factory")
             else:
-                transport_factory = lambda: TornadoTransport()
+                transport_factory = lambda: TornadoTransport(ping_interval=self._ping_interval,
+                    ping_timeout=self._ping_timeout)
         self._transport_factory = transport_factory
         if protocol_factory is None:
             protocol_factory = lambda: protocol.GremlinServerWSProtocol(
@@ -107,8 +108,7 @@ class Client:
         return connection.Connection(
             self._url, self._traversal_source, protocol,
             self._transport_factory, self._executor, self._pool,
-            headers=self._headers, ping_interval=self._ping_interval,
-            ping_timeout=self._ping_timeout)
+            headers=self._headers)
 
     def submit(self, message, bindings=None):
         return self.submitAsync(message, bindings=bindings).result()

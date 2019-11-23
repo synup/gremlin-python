@@ -26,7 +26,7 @@ __author__ = 'David M. Brown (davebshow@gmail.com)'
 class Connection:
 
     def __init__(self, url, traversal_source, protocol, transport_factory,
-                 executor, pool, headers=None, ping_interval=None, ping_timeout=None):
+                 executor, pool, headers=None):
         self._url = url
         self._headers = headers
         self._traversal_source = traversal_source
@@ -37,13 +37,11 @@ class Connection:
         self._pool = pool
         self._results = {}
         self._inited = False
-        self._ping_interval = ping_interval
-        self._ping_timeout = ping_timeout
 
     def connect(self):
         if self._transport:
             self._transport.close()
-        self._transport = self._transport_factory(ping_interval=self._ping_interval, ping_timeout=self._ping_timeout)
+        self._transport = self._transport_factory()
         self._transport.connect(self._url, self._headers)
         self._protocol.connection_made(self._transport)
         self._inited = True
