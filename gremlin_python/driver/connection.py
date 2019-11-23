@@ -51,7 +51,9 @@ class Connection:
             self._transport.close()
 
     def write(self, request_message):
+        print(f"Writing to connection {self}")
         if not self._inited:
+            printf(f"Creating connection")
             self.connect()
         request_id = str(uuid.uuid4())
         result_set = resultset.ResultSet(queue.Queue(), request_id)
