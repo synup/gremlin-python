@@ -79,6 +79,7 @@ class Connection:
         return future
 
     def _receive(self):
+        print("receiving data")
         try:
             while True:
                 data = self._transport.read()
