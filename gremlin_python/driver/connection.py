@@ -85,6 +85,7 @@ class Connection:
             while True:
                 data = self._transport.read()
                 status_code = self._protocol.data_received(data, self._results)
+                logging.warning(f"data: {data} status_code: {status_code}")
                 if status_code != 206:
                     break
         finally:
