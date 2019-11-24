@@ -94,7 +94,7 @@ class Client:
             conn = self._get_connection()
             self._pool.put_nowait(conn)
 
-    def start_pinging():
+    def start_pinging(self):
         for i in range(self._pool_size):
             conn = self._pool.get(True)
             self._executor.submit(conn.ping)
