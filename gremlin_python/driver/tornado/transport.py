@@ -26,17 +26,14 @@ __author__ = 'David M. Brown (davebshow@gmail.com)'
 
 class TornadoTransport(AbstractBaseTransport):
 
-    def __init__(self, ping_interval=None, ping_timeout=None):
+    def __init__(self):
         self._loop = ioloop.IOLoop(make_current=False)
-        self._ping_interval = ping_interval
-        self._ping_timeout = ping_timeout
 
     def connect(self, url, headers=None):
         if headers:
             url = httpclient.HTTPRequest(url, headers=headers)
         self._ws = self._loop.run_sync(
-            lambda: websocket.websocket_connect(url, ping_interval=self._ping_interval,
-                ping_timeout=self._ping_timeout))
+            lambda: websocket.websocket_connect(url))
 
     def write(self, message):
         self._loop.run_sync(

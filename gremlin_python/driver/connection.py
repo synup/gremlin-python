@@ -47,6 +47,15 @@ class Connection:
         self._protocol.connection_made(self._transport)
         self._inited = True
 
+    def ping(self):
+        try:
+            if self._inited:
+                self._transport._ws.protocol.write_ping(b"")
+        except Exception as e:
+            logging.warning(f"Ping to gremlin server failed, error: {e}")
+        finally:
+            self._pool.put_nowait(self)
+
     def close(self):
         if self._inited:
             self._transport.close()

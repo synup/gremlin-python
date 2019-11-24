@@ -16,7 +16,7 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, Future
 
 from six.moves import queue
 
@@ -39,7 +39,7 @@ class Client:
     def __init__(self, url, traversal_source, protocol_factory=None,
                  transport_factory=None, pool_size=None, max_workers=None,
                  message_serializer=None, username="", password="",
-                 headers=None, ping_interval=None, ping_timeout=None):
+                 headers=None):
         self._url = url
         self._headers = headers
         self._traversal_source = traversal_source
@@ -48,8 +48,6 @@ class Client:
         self._message_serializer = message_serializer
         self._username = username
         self._password = password
-        self._ping_interval = ping_interval
-        self._ping_timeout = ping_timeout
         if transport_factory is None:
             try:
                 from gremlin_python.driver.tornado.transport import (
@@ -58,8 +56,7 @@ class Client:
                 raise Exception("Please install Tornado or pass"
                                 "custom transport factory")
             else:
-                transport_factory = lambda: TornadoTransport(ping_interval=self._ping_interval,
-                    ping_timeout=self._ping_timeout)
+                transport_factory = lambda: TornadoTransport()
         self._transport_factory = transport_factory
         if protocol_factory is None:
             protocol_factory = lambda: protocol.GremlinServerWSProtocol(
@@ -96,6 +93,11 @@ class Client:
         for i in range(self._pool_size):
             conn = self._get_connection()
             self._pool.put_nowait(conn)
+
+    def start_pinging():
+        for i in range(self._pool_size):
+            conn = self._pool.get(True)
+            self._executor.submit(conn.ping)
 
     def close(self):
         while not self._pool.empty():
