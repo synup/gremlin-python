@@ -15,6 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 import uuid
+import logging
 from concurrent.futures import Future
 from six.moves import queue
 
@@ -51,9 +52,9 @@ class Connection:
             self._transport.close()
 
     def write(self, request_message):
-        print(f"Writing to connection {self}")
+        logging.warning(f"Writing to connection {self}")
         if not self._inited:
-            print(f"Creating connection")
+            logging.warning(f"Creating connection")
             self.connect()
         request_id = str(uuid.uuid4())
         result_set = resultset.ResultSet(queue.Queue(), request_id)
@@ -79,7 +80,7 @@ class Connection:
         return future
 
     def _receive(self):
-        print("receiving data")
+        logging.warning("receiving data")
         try:
             while True:
                 data = self._transport.read()
