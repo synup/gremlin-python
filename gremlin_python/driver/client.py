@@ -116,11 +116,6 @@ class Client:
         ping_callback.start()
         loop.run_forever()
 
-    def start_pinging(self):
-        for i in range(self._pool_size):
-            conn = self._pool.get(True)
-            self._executor.submit(conn.ping)
-
     def close(self):
         while not self._pool.empty():
             conn = self._pool.get(True)

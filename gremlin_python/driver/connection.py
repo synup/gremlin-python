@@ -50,7 +50,6 @@ class Connection:
     def ping(self):
         try:
             if self._inited:
-                logging.warning("Socket inited, pinging now")
                 self._transport._ws.protocol.write_ping(b"")
         except Exception as e:
             logging.warning(f"Ping to gremlin server failed, error: {e}")

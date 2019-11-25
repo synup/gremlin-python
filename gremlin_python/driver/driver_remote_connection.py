@@ -52,9 +52,6 @@ class DriverRemoteConnection(RemoteConnection):
     def close(self):
         self._client.close()
 
-    def ping_server(self):
-        self._client.start_pinging()
-
     def submit(self, bytecode):
         result_set = self._client.submit(bytecode)
         results = result_set.all().result()
