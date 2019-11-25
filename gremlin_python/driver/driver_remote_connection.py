@@ -31,7 +31,7 @@ class DriverRemoteConnection(RemoteConnection):
                  transport_factory=None, pool_size=None, max_workers=None,
                  username="", password="", message_serializer=None,
                  graphson_reader=None, graphson_writer=None,
-                 headers=None):
+                 headers=None, ping_interval=None):
         if message_serializer is None:
             message_serializer = serializer.GraphSONMessageSerializer(
                 reader=graphson_reader,
@@ -44,7 +44,8 @@ class DriverRemoteConnection(RemoteConnection):
                                      message_serializer=message_serializer,
                                      username=username,
                                      password=password,
-                                     headers=headers)
+                                     headers=headers,
+                                     ping_interval=ping_interval)
         self._url = self._client._url
         self._traversal_source = self._client._traversal_source
 
