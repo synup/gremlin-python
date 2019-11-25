@@ -61,9 +61,7 @@ class Connection:
             self._transport.close()
 
     def write(self, request_message):
-        logging.warning(f"Writing to connection {self}")
         if not self._inited:
-            logging.warning(f"Creating connection")
             self.connect()
         request_id = str(uuid.uuid4())
         result_set = resultset.ResultSet(queue.Queue(), request_id)
@@ -94,7 +92,6 @@ class Connection:
             while True:
                 data = self._transport.read()
                 status_code = self._protocol.data_received(data, self._results)
-                logging.warning(f"data: {data} status_code: {status_code}")
                 if status_code != 206:
                     break
         finally:
