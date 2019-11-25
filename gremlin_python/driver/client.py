@@ -127,7 +127,6 @@ class Client:
             conn.close()
         self._executor.shutdown()
         self._ping_event_loop.stop()
-        self._ping_thread.s
 
     def _get_connection(self):
         protocol = self._protocol_factory()
