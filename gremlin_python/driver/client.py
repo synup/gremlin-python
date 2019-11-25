@@ -105,7 +105,6 @@ class Client:
             self._pool.put_nowait(conn)
 
     def ping_connections(self):
-        logging.warn('Beginning connections ping')
         for i in range(self._pool_size):
             conn = self._pool.get(True)
             conn.ping()
