@@ -16,9 +16,13 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-from concurrent.futures import ThreadPoolExecutor, Future
+import asyncio
+import logging
 
+from concurrent.futures import ThreadPoolExecutor
 from six.moves import queue
+from threading import Thread
+from tornado.ioloop import PeriodicCallback
 
 from gremlin_python.driver import connection, protocol, request, serializer
 from gremlin_python.process import traversal
@@ -39,7 +43,7 @@ class Client:
     def __init__(self, url, traversal_source, protocol_factory=None,
                  transport_factory=None, pool_size=None, max_workers=None,
                  message_serializer=None, username="", password="",
-                 headers=None):
+                 headers=None, ping_interval=None):
         self._url = url
         self._headers = headers
         self._traversal_source = traversal_source
@@ -48,6 +52,7 @@ class Client:
         self._message_serializer = message_serializer
         self._username = username
         self._password = password
+        self._ping_thread = ping_interval
         if transport_factory is None:
             try:
                 from gremlin_python.driver.tornado.transport import (
@@ -77,6 +82,11 @@ class Client:
         self._pool = queue.Queue()
         self._fill_pool()
 
+        if(ping_interval):
+            self._ping_event_loop = asyncio.new_event_loop()
+            self._ping_thread = Thread(target=self.ping_server, args=(self._ping_event_loop,))
+            self._ping_thread.start()
+
     @property
     def available_pool_size(self):
         return self._pool.qsize()
@@ -93,6 +103,18 @@ class Client:
         for i in range(self._pool_size):
             conn = self._get_connection()
             self._pool.put_nowait(conn)
+
+    def ping_connections(self):
+        logging.warn('Beginning connections ping')
+        for i in range(self._pool_size):
+            conn = self._pool.get(True)
+            conn.ping()
+
+    def ping_server(self, loop):
+        asyncio.set_event_loop(loop)
+        ping_callback = PeriodicCallback(ping_connections, self._ping_interval)
+        ping_callback.start()
+        loop.run_forever()
 
     def start_pinging(self):
         for i in range(self._pool_size):
