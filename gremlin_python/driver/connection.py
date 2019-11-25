@@ -87,7 +87,6 @@ class Connection:
         return future
 
     def _receive(self):
-        logging.warning("receiving data")
         try:
             while True:
                 data = self._transport.read()
