@@ -112,7 +112,7 @@ class Client:
 
     def ping_server(self, loop):
         asyncio.set_event_loop(loop)
-        ping_callback = PeriodicCallback(ping_connections, self._ping_interval)
+        ping_callback = PeriodicCallback(self.ping_connections, self._ping_interval)
         ping_callback.start()
         loop.run_forever()
 
@@ -126,6 +126,8 @@ class Client:
             conn = self._pool.get(True)
             conn.close()
         self._executor.shutdown()
+        self._ping_event_loop.stop()
+        self._ping_thread.s
 
     def _get_connection(self):
         protocol = self._protocol_factory()
