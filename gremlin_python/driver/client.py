@@ -52,7 +52,7 @@ class Client:
         self._message_serializer = message_serializer
         self._username = username
         self._password = password
-        self._ping_thread = ping_interval
+        self._ping_interval = ping_interval
         if transport_factory is None:
             try:
                 from gremlin_python.driver.tornado.transport import (
