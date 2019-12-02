@@ -84,7 +84,7 @@ class Client:
 
         if(ping_interval):
             self._ping_event_loop = asyncio.new_event_loop()
-            self._ping_thread = Thread(target=self.ping_server, args=(self._ping_event_loop,))
+            self._ping_thread = Thread(target=self.ping_server, args=(self._ping_event_loop,), daemon=True)
             self._ping_thread.start()
 
     @property
