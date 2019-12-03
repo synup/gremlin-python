@@ -40,7 +40,6 @@ class Connection:
         self._inited = False
 
     def connect(self):
-        logging.warning("opening connection")
         if self._transport:
             self._transport.close()
         self._transport = self._transport_factory()
@@ -92,7 +91,6 @@ class Connection:
         try:
             while True:
                 data = self._transport.read()
-                logging.warning(f"got this data: {data}")
                 status_code = self._protocol.data_received(data, self._results)
                 if status_code != 206:
                     break
