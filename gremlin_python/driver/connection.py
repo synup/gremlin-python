@@ -59,6 +59,7 @@ class Connection:
             self._pool.put_nowait(self)
 
     def close(self):
+        logging.warning("closing connections")
         if self._inited:
             self._transport.close()
 
