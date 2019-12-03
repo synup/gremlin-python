@@ -81,7 +81,6 @@ class Client:
         # Threadsafe queue
         self._pool = queue.Queue()
         self._fill_pool()
-        logging.warning("creating a client")
 
         if(ping_interval):
             self._ping_event_loop = asyncio.new_event_loop()
@@ -124,7 +123,6 @@ class Client:
         self._ping_event_loop.stop()
 
     def _get_connection(self):
-        logging.warning("get connection from client")
         protocol = self._protocol_factory()
         return connection.Connection(
             self._url, self._traversal_source, protocol,
